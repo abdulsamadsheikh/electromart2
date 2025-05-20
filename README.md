@@ -122,7 +122,7 @@ electro_mart_project/
 
    ```bash
    git clone https://github.com/abdulsamadsheikh/electromart2.git
-   cd electro_mart_project
+   cd electromart2
    ```
 
 2. **Create a virtual environment**

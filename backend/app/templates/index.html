@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to ElectroMart{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome to ElectroMart!</h1>
+    <p>Your one-stop shop for the latest electronics.</p>
+    <a href="{{ url_for('main_routes.products') }}" class="btn btn-primary">Shop Now</a>
+</section>
+
+<section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="product-grid">
+        <div class="product-card">
+            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
+            <h3>Sample Product 1</h3>
+            <p class="price">$99.99</p>
+            <a href="#" class="btn">View Details</a>
+        </div>
+        <div class="product-card">
+            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
+            <h3>Sample Product 2</h3>
+            <p class="price">$149.99</p>
+            <a href="#" class="btn">View Details</a>
+        </div>
+        <div class="product-card">
+            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
+            <h3>Sample Product 3</h3>
+            <p class="price">$199.99</p>
+            <a href="#" class="btn">View Details</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
