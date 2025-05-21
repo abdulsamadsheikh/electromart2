@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Order History - ElectroMart{% endblock %}
+
+{% block content %}
+<div class="order-history-container">
+    <h1>Order History</h1>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <h3>Order #{{ order.OrderID }}</h3>
+                            <p class="order-date">{{ order.OrderDate.strftime('%B %d, %Y') }}</p>
+                            <p class="order-status {{ order.Status.lower() }}">{{ order.Status }}</p>
+                        </div>
+                        <div class="order-total">
+                            <span>Total:</span>
+                            <span class="price">${{ "%.2f"|format(order.TotalAmount) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="order-items">
+                        {% for item in order.order_items %}
+                            <div class="order-item">
+                                <div class="item-image">
+                                    {% if item.product.ImageURL %}
+                                        <img src="{{ item.product.ImageURL }}" alt="{{ item.product.Name }}">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                                    {% endif %}
+                                </div>
+                                <div class="item-details">
+                                    <h4>{{ item.product.Name }}</h4>
+                                    <p class="item-quantity">Quantity: {{ item.Quantity }}</p>
+                                    <p class="item-price">Price: ${{ "%.2f"|format(item.UnitPrice) }}</p>
+                                    <p class="item-subtotal">Subtotal: ${{ "%.2f"|format(item.Subtotal) }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="order-shipping">
+                        <h4>Shipping Address</h4>
+                        <p>{{ order.ShippingAddressLine1 }}</p>
+                        {% if order.ShippingAddressLine2 %}
+                            <p>{{ order.ShippingAddressLine2 }}</p>
+                        {% endif %}
+                        <p>{{ order.ShippingCity }}, {{ order.ShippingPostalCode }}</p>
+                        <p>{{ order.ShippingCountry }}</p>
+                    </div>
+
+                    {% if order.payment %}
+                        <div class="payment-info">
+                            <h4>Payment Information</h4>
+                            <p>Method: {{ order.payment.PaymentMethod }}</p>
+                            <p>Status: {{ order.payment.Status }}</p>
+                            <p>Date: {{ order.payment.PaymentDate.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if pagination %}
+            <div class="pagination">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('auth.order_history', page=pagination.prev_num) }}" class="btn">&laquo; Previous</a>
+                {% endif %}
+                
+                {% for page_num in pagination.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                    {% if page_num %}
+                        {% if page_num == pagination.page %}
+                            <span class="current-page">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('auth.order_history', page=page_num) }}" class="page-num">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        <span class="ellipsis">…</span>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('auth.order_history', page=pagination.next_num) }}" class="btn">Next &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-orders">
+            <p>You haven't placed any orders yet.</p>
+            <a href="{{ url_for('main_routes.products') }}" class="btn btn-primary">Start Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

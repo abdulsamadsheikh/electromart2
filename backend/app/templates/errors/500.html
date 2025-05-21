@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1>500 - Server Error</h1>
+    <div class="error-content">
+        <p>Something went wrong on our end.</p>
+        <p>Our team has been notified and we're working to fix the issue.</p>
+        <div class="error-actions">
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Return to Homepage
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .error-container {
+        text-align: center;
+        padding: 40px 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-content {
+        margin-top: 30px;
+    }
+    
+    .error-actions {
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %} 

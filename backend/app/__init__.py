@@ -1,5 +1,5 @@
-from flask import Flask
-from backend.config import Config
+from flask import Flask, render_template
+from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager 
@@ -18,11 +18,21 @@ def create_app(config_class=Config):
     migrate.init_app(app, db) # Initialize once with the app instance
     login_manager.init_app(app)
 
-    from backend.app.routes import bp as main_routes_bp
+    from app.routes import bp as main_routes_bp
     app.register_blueprint(main_routes_bp)
 
-    from backend.app.auth import bp as auth_routes_bp
+    from app.auth import bp as auth_routes_bp
     app.register_blueprint(auth_routes_bp, url_prefix='/auth')
+
+    # Register error handlers
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        db.session.rollback()  # Roll back the session in case of database errors
+        return render_template('errors/500.html'), 500
 
     # Ensure models are known to the app
     with app.app_context():
