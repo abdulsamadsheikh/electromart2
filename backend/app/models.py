@@ -1,139 +1,99 @@
-from datetime import datetime, timezone
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
-from backend.app import db, login_manager # Import db and login_manager
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
-# User loader function required by Flask-Login
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.get(AppUser, int(user_id)) # Use db.session.get for SQLAlchemy 2.0+
+db = SQLAlchemy()
 
 class Category(db.Model):
-    __tablename__ = 'category' # Should match your PostgreSQL table name (typically lowercase)
-    categoryid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-    description = db.Column(db.Text)
+    __tablename__ = 'category'
 
-    products = db.relationship('Product', backref='category', lazy='dynamic') # 'dynamic' for query building
+    CategoryID = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(100), nullable=False, unique=True)
+    Description = db.Column(db.Text)
 
-    def __repr__(self):
-        return f"<Category {self.name}>"
+    products = db.relationship('Product', backref='category', lazy=True)
 
 class Brand(db.Model):
     __tablename__ = 'brand'
-    brandid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-    description = db.Column(db.Text)
 
-    products = db.relationship('Product', backref='brand', lazy='dynamic')
+    BrandID = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(100), nullable=False, unique=True)
+    Description = db.Column(db.Text)
 
-    def __repr__(self):
-        return f"<Brand {self.name}>"
+    products = db.relationship('Product', backref='brand', lazy=True)
 
-class AppUser(UserMixin, db.Model): # Inherit from UserMixin
+class AppUser(db.Model):
     __tablename__ = 'appuser'
-    userid = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False, unique=True)
-    passwordhash = db.Column(db.String(255), nullable=False) # Increased length for future hash algorithms
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    firstname = db.Column(db.String(50), nullable=False)
-    lastname = db.Column(db.String(50), nullable=False)
-    addressline1 = db.Column(db.String(255))
-    addressline2 = db.Column(db.String(255))
-    city = db.Column(db.String(100))
-    postalcode = db.Column(db.String(20))
-    country = db.Column(db.String(50))
-    phonenumber = db.Column(db.String(20))
-    registrationdate = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
-    orders = db.relationship('CustomerOrder', backref='user', lazy='dynamic')
+    UserID = db.Column(db.Integer, primary_key=True)
+    Username = db.Column(db.String(50), nullable=False, unique=True)
+    PasswordHash = db.Column(db.String(255), nullable=False)
+    Email = db.Column(db.String(100), nullable=False, unique=True)
+    FirstName = db.Column(db.String(50), nullable=False)
+    LastName = db.Column(db.String(50), nullable=False)
+    AddressLine1 = db.Column(db.String(255))
+    AddressLine2 = db.Column(db.String(255))
+    City = db.Column(db.String(100))
+    PostalCode = db.Column(db.String(20))
+    Country = db.Column(db.String(50))
+    PhoneNumber = db.Column(db.String(20))
+    RegistrationDate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
-    # For UserMixin, Flask-Login needs an 'id' property.
-    # Our primary key is 'userid', so we can alias it or Flask-Login might pick it up.
-    # Explicitly, you can do:
-    def get_id(self):
-        return str(self.userid)
-
-    def set_password(self, password):
-        self.passwordhash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.passwordhash, password)
-
-    def __repr__(self):
-        return f"<AppUser {self.username}>"
+    orders = db.relationship('CustomerOrder', backref='user', lazy=True)
 
 class Product(db.Model):
     __tablename__ = 'product'
-    productid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    price = db.Column(db.Numeric(10, 2), nullable=False) # Add Check constraint in DB
-    stockquantity = db.Column(db.Integer, nullable=False, default=0) # Add Check constraint in DB
-    categoryid = db.Column(db.Integer, db.ForeignKey('category.categoryid'), nullable=False)
-    brandid = db.Column(db.Integer, db.ForeignKey('brand.brandid'), nullable=False)
-    imageurl = db.Column(db.String(255))
-    dateadded = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
-    lastupdated = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    # category = db.relationship('Category', backref='products') # Handled by backref in Category
-    # brand = db.relationship('Brand', backref='products') # Handled by backref in Brand
-    order_items = db.relationship('OrderItem', backref='product', lazy='dynamic')
+    ProductID = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(255), nullable=False)
+    Description = db.Column(db.Text, nullable=False)
+    Price = db.Column(db.Numeric(10, 2), nullable=False)
+    StockQuantity = db.Column(db.Integer, nullable=False, default=0)
+    CategoryID = db.Column(db.Integer, db.ForeignKey('category.CategoryID'), nullable=False)
+    BrandID = db.Column(db.Integer, db.ForeignKey('brand.BrandID'), nullable=False)
+    ImageURL = db.Column(db.String(255))
+    DateAdded = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    LastUpdated = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def __repr__(self):
-        return f"<Product {self.name}>"
+    order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
 class CustomerOrder(db.Model):
     __tablename__ = 'customerorder'
-    orderid = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('appuser.userid'), nullable=False)
-    orderdate = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
-    totalamount = db.Column(db.Numeric(12, 2), nullable=False) # Add Check constraint in DB
-    status = db.Column(db.String(50), nullable=False, default='Pending')
-    shippingaddressline1 = db.Column(db.String(255), nullable=False)
-    shippingaddressline2 = db.Column(db.String(255))
-    shippingcity = db.Column(db.String(100), nullable=False)
-    shippingpostalcode = db.Column(db.String(20), nullable=False)
-    shippingcountry = db.Column(db.String(50), nullable=False)
 
-    # user = db.relationship('AppUser', backref='orders') # Handled by backref in AppUser
-    items = db.relationship('OrderItem', backref='order', lazy='dynamic', cascade='all, delete-orphan')
-    payment = db.relationship('Payment', backref='order', uselist=False, cascade='all, delete-orphan') # One-to-one
+    OrderID = db.Column(db.Integer, primary_key=True)
+    UserID = db.Column(db.Integer, db.ForeignKey('appuser.UserID'), nullable=False)
+    OrderDate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    TotalAmount = db.Column(db.Numeric(12, 2), nullable=False)
+    Status = db.Column(db.String(50), nullable=False, default='Pending')
+    ShippingAddressLine1 = db.Column(db.String(255), nullable=False)
+    ShippingAddressLine2 = db.Column(db.String(255))
+    ShippingCity = db.Column(db.String(100), nullable=False)
+    ShippingPostalCode = db.Column(db.String(20), nullable=False)
+    ShippingCountry = db.Column(db.String(50), nullable=False)
 
-    def __repr__(self):
-        return f"<CustomerOrder {self.orderid}>"
+    order_items = db.relationship('OrderItem', backref='order', lazy=True)
+    payment = db.relationship('Payment', uselist=False, backref='order', lazy=True)
 
 class OrderItem(db.Model):
     __tablename__ = 'orderitem'
-    orderitemid = db.Column(db.Integer, primary_key=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('customerorder.orderid', ondelete='CASCADE'), nullable=False)
-    productid = db.Column(db.Integer, db.ForeignKey('product.productid', ondelete='RESTRICT'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False) # Add Check constraint in DB
-    unitprice = db.Column(db.Numeric(10, 2), nullable=False) # Add Check constraint in DB
-    subtotal = db.Column(db.Numeric(12, 2), nullable=False) # Add Check constraint in DB
 
-    # order = db.relationship('CustomerOrder', backref='items') # Handled by backref in CustomerOrder
-    # product = db.relationship('Product', backref='order_items') # Handled by backref in Product
+    OrderItemID = db.Column(db.Integer, primary_key=True)
+    OrderID = db.Column(db.Integer, db.ForeignKey('customerorder.OrderID', ondelete="CASCADE"), nullable=False)
+    ProductID = db.Column(db.Integer, db.ForeignKey('product.ProductID'), nullable=False)
+    Quantity = db.Column(db.Integer, nullable=False)
+    UnitPrice = db.Column(db.Numeric(10, 2), nullable=False)
+    Subtotal = db.Column(db.Numeric(12, 2), nullable=False)
 
-    # To enforce uniqueness of (orderid, productid) at the model/app level if desired,
-    # or rely on the DB constraint already defined in schema.sql
-    __table_args__ = (db.UniqueConstraint('orderid', 'productid', name='uq_order_product_sa'),)
-
-
-    def __repr__(self):
-        return f"<OrderItem {self.orderitemid} (Order: {self.orderid}, Product: {self.productid})>"
+    __table_args__ = (
+        db.UniqueConstraint('OrderID', 'ProductID', name='uq_order_product'),
+    )
 
 class Payment(db.Model):
     __tablename__ = 'payment'
-    paymentid = db.Column(db.Integer, primary_key=True)
-    orderid = db.Column(db.Integer, db.ForeignKey('customerorder.orderid', ondelete='CASCADE'), nullable=False, unique=True)
-    paymentdate = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
-    paymentmethod = db.Column(db.String(50), nullable=False)
-    amount = db.Column(db.Numeric(12, 2), nullable=False) # Add Check constraint in DB
-    status = db.Column(db.String(50), nullable=False, default='Pending')
-    transactionid = db.Column(db.String(255), unique=True, nullable=True) # Nullable because it might not always exist
 
-    # order = db.relationship('CustomerOrder', backref='payment') # Handled by backref in CustomerOrder
-
-    def __repr__(self):
-        return f"<Payment {self.paymentid} for Order {self.orderid}>"
+    PaymentID = db.Column(db.Integer, primary_key=True)
+    OrderID = db.Column(db.Integer, db.ForeignKey('customerorder.OrderID', ondelete="CASCADE"), nullable=False, unique=True)
+    PaymentDate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    PaymentMethod = db.Column(db.String(50), nullable=False)
+    Amount = db.Column(db.Numeric(12, 2), nullable=False)
+    Status = db.Column(db.String(50), nullable=False, default='Pending')
+    TransactionID = db.Column(db.String(255), unique=True)
