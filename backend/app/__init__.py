@@ -3,6 +3,8 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_session import Session
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -13,6 +15,12 @@ login_manager.login_message_category = 'info'
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    # Configure server-side session storage
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SESSION_FILE_DIR'] = os.path.join(app.root_path, 'flask_session')
+    app.config['SESSION_PERMANENT'] = False
+    Session(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
