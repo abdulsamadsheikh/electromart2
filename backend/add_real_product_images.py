@@ -1,6 +1,7 @@
 import os
 import requests
-from app import create_app, db, Product
+from app import create_app, db
+from app.models import Product
 
 def download_image(url, filename, save_path):
     try:

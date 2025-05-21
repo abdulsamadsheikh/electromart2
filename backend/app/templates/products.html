@@ -41,7 +41,7 @@
                         <a href="{{ url_for('main_routes.product_detail', product_id=product.ProductID) }}" class="product-link">
                             <div class="product-image">
                                 {% if product.ImageURL %}
-                                    <img src="{{ product.ImageURL }}" alt="{{ product.Name }}">
+                                    <img src="{{ url_for('static', filename='images/' + product.ImageURL) if not product.ImageURL.startswith('http') and not product.ImageURL.startswith('/static/') else product.ImageURL }}" alt="{{ product.Name }}">
                                 {% else %}
                                     <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
                                 {% endif %}

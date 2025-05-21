@@ -7,7 +7,7 @@
     <div class="product-main">
         <div class="product-image">
             {% if product.ImageURL %}
-                <img src="{{ product.ImageURL }}" alt="{{ product.Name }}">
+                <img src="{{ url_for('static', filename='images/' + product.ImageURL) if not product.ImageURL.startswith('http') and not product.ImageURL.startswith('/static/') else product.ImageURL }}" alt="{{ product.Name }}">
             {% else %}
                 <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
             {% endif %}
@@ -50,7 +50,7 @@
                     <div class="product-card">
                         <a href="{{ url_for('main_routes.product_detail', product_id=related.ProductID) }}">
                             {% if related.ImageURL %}
-                                <img src="{{ related.ImageURL }}" alt="{{ related.Name }}">
+                                <img src="{{ url_for('static', filename='images/' + related.ImageURL) if not related.ImageURL.startswith('http') and not related.ImageURL.startswith('/static/') else related.ImageURL }}" alt="{{ related.Name }}">
                             {% else %}
                                 <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
                             {% endif %}

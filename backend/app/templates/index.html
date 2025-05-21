@@ -4,32 +4,194 @@
 
 {% block content %}
 <section class="hero">
-    <h1>Welcome to ElectroMart!</h1>
-    <p>Your one-stop shop for the latest electronics.</p>
-    <a href="{{ url_for('main_routes.products') }}" class="btn btn-primary">Shop Now</a>
+    <div class="hero-content">
+        <h1>Welcome to ElectroMart!</h1>
+        <p>Your one-stop shop for the latest electronics and gadgets.</p>
+        <a href="{{ url_for('main_routes.products') }}" class="btn btn-primary btn-large">Shop Now</a>
+    </div>
 </section>
 
 <section class="featured-products">
     <h2>Featured Products</h2>
     <div class="product-grid">
-        <div class="product-card">
-            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
-            <h3>Sample Product 1</h3>
-            <p class="price">$99.99</p>
-            <a href="#" class="btn">View Details</a>
-        </div>
-        <div class="product-card">
-            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
-            <h3>Sample Product 2</h3>
-            <p class="price">$149.99</p>
-            <a href="#" class="btn">View Details</a>
-        </div>
-        <div class="product-card">
-            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="Product Image Placeholder">
-            <h3>Sample Product 3</h3>
-            <p class="price">$199.99</p>
-            <a href="#" class="btn">View Details</a>
-        </div>
+        {% for product in featured_products %}
+            <div class="product-card">
+                <a href="{{ url_for('main_routes.product_detail', product_id=product.ProductID) }}" class="product-link">
+                    <div class="product-image">
+                        {% if product.ImageURL %}
+                            <img src="{{ url_for('static', filename='images/' + product.ImageURL) if not product.ImageURL.startswith('http') and not product.ImageURL.startswith('/static/') else product.ImageURL }}" alt="{{ product.Name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.Name }}</h3>
+                        <p class="product-brand">{{ product.brand.Name }}</p>
+                        <p class="product-price">${{ "%.2f"|format(product.Price) }}</p>
+                        {% if product.StockQuantity > 0 %}
+                            <p class="stock in-stock">In Stock</p>
+                        {% else %}
+                            <p class="stock out-of-stock">Out of Stock</p>
+                        {% endif %}
+                    </div>
+                </a>
+                {% if product.StockQuantity > 0 %}
+                    <form action="{{ url_for('main_routes.add_to_cart', product_id=product.ProductID) }}" method="POST" class="add-to-cart-form">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-disabled" disabled>Out of Stock</button>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 </section>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/images/hero-bg.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        text-align: center;
+        padding: 100px 20px;
+        margin-bottom: 40px;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-large {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+    }
+
+    .featured-products {
+        padding: 40px 20px;
+    }
+
+    .featured-products h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2rem;
+        color: #2c3e50;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-image {
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image img {
+        transform: scale(1.05);
+    }
+
+    .product-info {
+        padding: 20px;
+    }
+
+    .product-info h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+    }
+
+    .product-brand {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 10px 0;
+    }
+
+    .stock {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin: 10px 0;
+    }
+
+    .in-stock {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .out-of-stock {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .add-to-cart-form {
+        padding: 0 20px 20px;
+    }
+
+    .btn-disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+        }
+
+        .product-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+</style>
 {% endblock %}

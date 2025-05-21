@@ -171,6 +171,7 @@ def process_checkout():
             ShippingCountry=request.form['shipping_country']
         )
         db.session.add(order)
+        db.session.flush()  # This will generate the OrderID without committing
         
         # Create order items and update stock
         for item in cart_items:
@@ -202,6 +203,7 @@ def process_checkout():
         
     except Exception as e:
         db.session.rollback()
+        print('Checkout error:', e)
         flash('Could not process your order. Please try again.', 'error')
         return redirect(url_for('main_routes.checkout'))
 

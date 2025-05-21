@@ -18,13 +18,16 @@
                         <p class="order-total">Total Amount: ${{ "%.2f"|format(order.TotalAmount) }}</p>
                         <p class="shipping-address">
                             Shipping Address:<br>
-                            {{ order.ShippingAddress }}
+                            {{ order.ShippingAddressLine1 }}
+                            {% if order.ShippingAddressLine2 %}<br>{{ order.ShippingAddressLine2 }}{% endif %}
+                            <br>{{ order.ShippingCity }}, {{ order.ShippingPostalCode }}
+                            <br>{{ order.ShippingCountry }}
                         </p>
-                        {% if order.items %}
+                        {% if order.order_items %}
                             <div class="order-items">
                                 <h4>Items:</h4>
                                 <ul>
-                                    {% for item in order.items %}
+                                    {% for item in order.order_items %}
                                         <li>
                                             {{ item.product.Name }} - Quantity: {{ item.Quantity }}
                                             <span class="item-price">${{ "%.2f"|format(item.UnitPrice) }}</span>
