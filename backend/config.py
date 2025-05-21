@@ -15,8 +15,6 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    # Railway.app provides DATABASE_URL in the format: postgresql://user:pass@host:port/dbname
-    # We need to ensure it's properly formatted for SQLAlchemy
     @property
     def SQLALCHEMY_DATABASE_URI(self):
         uri = os.environ.get('DATABASE_URL')
