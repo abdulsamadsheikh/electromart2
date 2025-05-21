@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, abort, request, url_for, flash, redirect, jsonify
 from flask_login import login_required, current_user
-from backend.app.models import Product, Category, Brand, CustomerOrder, OrderItem, Payment
-from backend.app.cart import Cart
-from backend.app import db
+from app.models import Product, Category, Brand, CustomerOrder, OrderItem, Payment
+from app.cart import Cart
+from app import db
 from decimal import Decimal
 
 # Create a Blueprint. 'main_routes' is the name of the blueprint.

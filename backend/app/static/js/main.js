@@ -124,3 +124,74 @@ document.querySelectorAll('.add-to-cart-form').forEach(form => {
         }
     });
 });
+
+// Handle quantity updates in cart
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle quantity increase/decrease buttons
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const productId = this.dataset.productId;
+            const action = this.dataset.action;
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/update_cart_item/${productId}`;
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = action;
+            
+            form.appendChild(actionInput);
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
+
+    // Handle remove from cart buttons
+    document.querySelectorAll('.remove-from-cart').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (confirm('Are you sure you want to remove this item from your cart?')) {
+                const productId = this.dataset.productId;
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/remove_from_cart/${productId}`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+
+    // Auto-hide flash messages after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.style.opacity = '0';
+            alert.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 5000);
+
+    // Handle product sorting
+    const sortSelect = document.getElementById('sort-products');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            const url = new URL(window.location);
+            url.searchParams.set('sort', this.value);
+            window.location = url;
+        });
+    }
+
+    // Handle category filter
+    const categorySelect = document.getElementById('category-filter');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const url = new URL(window.location);
+            if (this.value) {
+                url.searchParams.set('category_id', this.value);
+            } else {
+                url.searchParams.delete('category_id');
+            }
+            window.location = url;
+        });
+    }
+});

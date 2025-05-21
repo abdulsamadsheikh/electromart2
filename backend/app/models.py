@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-db = SQLAlchemy()
+from flask_login import UserMixin
+from app import db
 
 class Category(db.Model):
-    __tablename__ = 'category'
+    __tablename__ = 'categories'
 
     CategoryID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(100), nullable=False, unique=True)
@@ -13,7 +13,7 @@ class Category(db.Model):
     products = db.relationship('Product', backref='category', lazy=True)
 
 class Brand(db.Model):
-    __tablename__ = 'brand'
+    __tablename__ = 'brands'
 
     BrandID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(100), nullable=False, unique=True)
@@ -21,8 +21,8 @@ class Brand(db.Model):
 
     products = db.relationship('Product', backref='brand', lazy=True)
 
-class AppUser(db.Model):
-    __tablename__ = 'appuser'
+class AppUser(UserMixin, db.Model):
+    __tablename__ = 'users'
 
     UserID = db.Column(db.Integer, primary_key=True)
     Username = db.Column(db.String(50), nullable=False, unique=True)
@@ -40,16 +40,19 @@ class AppUser(db.Model):
 
     orders = db.relationship('CustomerOrder', backref='user', lazy=True)
 
+    def get_id(self):
+        return str(self.UserID)
+
 class Product(db.Model):
-    __tablename__ = 'product'
+    __tablename__ = 'products'
 
     ProductID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255), nullable=False)
     Description = db.Column(db.Text, nullable=False)
     Price = db.Column(db.Numeric(10, 2), nullable=False)
     StockQuantity = db.Column(db.Integer, nullable=False, default=0)
-    CategoryID = db.Column(db.Integer, db.ForeignKey('category.CategoryID'), nullable=False)
-    BrandID = db.Column(db.Integer, db.ForeignKey('brand.BrandID'), nullable=False)
+    CategoryID = db.Column(db.Integer, db.ForeignKey('categories.CategoryID'), nullable=False)
+    BrandID = db.Column(db.Integer, db.ForeignKey('brands.BrandID'), nullable=False)
     ImageURL = db.Column(db.String(255))
     DateAdded = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     LastUpdated = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -57,10 +60,10 @@ class Product(db.Model):
     order_items = db.relationship('OrderItem', backref='product', lazy=True)
 
 class CustomerOrder(db.Model):
-    __tablename__ = 'customerorder'
+    __tablename__ = 'orders'
 
     OrderID = db.Column(db.Integer, primary_key=True)
-    UserID = db.Column(db.Integer, db.ForeignKey('appuser.UserID'), nullable=False)
+    UserID = db.Column(db.Integer, db.ForeignKey('users.UserID'), nullable=False)
     OrderDate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     TotalAmount = db.Column(db.Numeric(12, 2), nullable=False)
     Status = db.Column(db.String(50), nullable=False, default='Pending')
@@ -74,11 +77,11 @@ class CustomerOrder(db.Model):
     payment = db.relationship('Payment', uselist=False, backref='order', lazy=True)
 
 class OrderItem(db.Model):
-    __tablename__ = 'orderitem'
+    __tablename__ = 'order_items'
 
     OrderItemID = db.Column(db.Integer, primary_key=True)
-    OrderID = db.Column(db.Integer, db.ForeignKey('customerorder.OrderID', ondelete="CASCADE"), nullable=False)
-    ProductID = db.Column(db.Integer, db.ForeignKey('product.ProductID'), nullable=False)
+    OrderID = db.Column(db.Integer, db.ForeignKey('orders.OrderID', ondelete="CASCADE"), nullable=False)
+    ProductID = db.Column(db.Integer, db.ForeignKey('products.ProductID'), nullable=False)
     Quantity = db.Column(db.Integer, nullable=False)
     UnitPrice = db.Column(db.Numeric(10, 2), nullable=False)
     Subtotal = db.Column(db.Numeric(12, 2), nullable=False)
@@ -88,10 +91,10 @@ class OrderItem(db.Model):
     )
 
 class Payment(db.Model):
-    __tablename__ = 'payment'
+    __tablename__ = 'payments'
 
     PaymentID = db.Column(db.Integer, primary_key=True)
-    OrderID = db.Column(db.Integer, db.ForeignKey('customerorder.OrderID', ondelete="CASCADE"), nullable=False, unique=True)
+    OrderID = db.Column(db.Integer, db.ForeignKey('orders.OrderID', ondelete="CASCADE"), nullable=False, unique=True)
     PaymentDate = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     PaymentMethod = db.Column(db.String(50), nullable=False)
     Amount = db.Column(db.Numeric(12, 2), nullable=False)

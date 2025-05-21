@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Product, Category, Brand, Order, OrderItem
+from app.models import AppUser, Product, Category, Brand, CustomerOrder, OrderItem
 from werkzeug.security import generate_password_hash
 import datetime
 
@@ -7,33 +7,40 @@ def seed_data():
     """Populate database with sample data."""
     app = create_app()
     with app.app_context():
+        # Create tables
+        db.create_all()
+        
         # Create categories
         categories = [
-            Category(name='Laptops', description='Portable computers for work and play'),
-            Category(name='Smartphones', description='Latest mobile devices'),
-            Category(name='Accessories', description='Essential gadget accessories'),
-            Category(name='Audio', description='Headphones and speakers')
+            Category(Name='Laptops', Description='Portable computers for work and play'),
+            Category(Name='Smartphones', Description='Latest mobile devices'),
+            Category(Name='Accessories', Description='Essential gadget accessories'),
+            Category(Name='Audio', Description='Headphones and speakers')
         ]
         db.session.add_all(categories)
         db.session.commit()
 
         # Create brands
         brands = [
-            Brand(name='TechPro', description='Premium technology products'),
-            Brand(name='SmartGear', description='Innovative smart devices'),
-            Brand(name='AudioMax', description='High-quality audio equipment'),
-            Brand(name='PowerTech', description='Reliable power accessories')
+            Brand(Name='TechPro', Description='Premium technology products'),
+            Brand(Name='SmartGear', Description='Innovative smart devices'),
+            Brand(Name='AudioMax', Description='High-quality audio equipment'),
+            Brand(Name='PowerTech', Description='Reliable power accessories')
         ]
         db.session.add_all(brands)
         db.session.commit()
 
         # Create admin user
-        admin = User(
-            email='admin@electromart.com',
-            password_hash=generate_password_hash('admin123'),
-            first_name='Admin',
-            last_name='User',
-            is_admin=True
+        admin = AppUser(
+            Username='admin',
+            Email='admin@electromart.com',
+            PasswordHash=generate_password_hash('admin123'),
+            FirstName='Admin',
+            LastName='User',
+            AddressLine1='123 Admin Street',
+            City='Admin City',
+            PostalCode='12345',
+            Country='Norway'
         )
         db.session.add(admin)
         db.session.commit()
@@ -41,40 +48,40 @@ def seed_data():
         # Create sample products
         products = [
             Product(
-                name='TechPro Laptop Pro',
-                description='15-inch professional laptop with latest processor',
-                price=1299.99,
-                stock=50,
-                category_id=1,
-                brand_id=1,
-                image_url='laptop_pro.jpg'
+                Name='TechPro Laptop Pro',
+                Description='15-inch professional laptop with latest processor',
+                Price=1299.99,
+                StockQuantity=50,
+                CategoryID=1,
+                BrandID=1,
+                ImageURL='laptop_pro.jpg'
             ),
             Product(
-                name='SmartGear Phone X',
-                description='Latest smartphone with 5G capability',
-                price=899.99,
-                stock=100,
-                category_id=2,
-                brand_id=2,
-                image_url='phone_x.jpg'
+                Name='SmartGear Phone X',
+                Description='Latest smartphone with 5G capability',
+                Price=899.99,
+                StockQuantity=100,
+                CategoryID=2,
+                BrandID=2,
+                ImageURL='phone_x.jpg'
             ),
             Product(
-                name='AudioMax Wireless Headphones',
-                description='Premium noise-canceling headphones',
-                price=249.99,
-                stock=75,
-                category_id=4,
-                brand_id=3,
-                image_url='headphones.jpg'
+                Name='AudioMax Wireless Headphones',
+                Description='Premium noise-canceling headphones',
+                Price=249.99,
+                StockQuantity=75,
+                CategoryID=4,
+                BrandID=3,
+                ImageURL='headphones.jpg'
             ),
             Product(
-                name='PowerTech Fast Charger',
-                description='65W USB-C fast charger',
-                price=49.99,
-                stock=200,
-                category_id=3,
-                brand_id=4,
-                image_url='charger.jpg'
+                Name='PowerTech Fast Charger',
+                Description='65W USB-C fast charger',
+                Price=49.99,
+                StockQuantity=200,
+                CategoryID=3,
+                BrandID=4,
+                ImageURL='charger.jpg'
             )
         ]
         db.session.add_all(products)

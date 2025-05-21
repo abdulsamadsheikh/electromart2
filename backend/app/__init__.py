@@ -2,12 +2,12 @@ from flask import Flask, render_template
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager 
+from flask_login import LoginManager
 
 db = SQLAlchemy()
-migrate = Migrate() # Define once
+migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'auth_routes.login'
+login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
 
 def create_app(config_class=Config):
@@ -15,14 +15,21 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db.init_app(app)
-    migrate.init_app(app, db) # Initialize once with the app instance
+    migrate.init_app(app, db)
     login_manager.init_app(app)
+
+    # Import models and routes
+    from app.models import AppUser
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return AppUser.query.get(int(user_id))
 
     from app.routes import bp as main_routes_bp
     app.register_blueprint(main_routes_bp)
 
-    from app.auth import bp as auth_routes_bp
-    app.register_blueprint(auth_routes_bp, url_prefix='/auth')
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
     # Register error handlers
     @app.errorhandler(404)
@@ -33,9 +40,5 @@ def create_app(config_class=Config):
     def internal_error(error):
         db.session.rollback()  # Roll back the session in case of database errors
         return render_template('errors/500.html'), 500
-
-    # Ensure models are known to the app
-    with app.app_context():
-        from . import models # This line imports your models.py
 
     return app

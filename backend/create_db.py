@@ -3,5 +3,6 @@ from app.models import Category, Brand, AppUser, Product, CustomerOrder, OrderIt
 
 app = create_app()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+with app.app_context():
+    db.create_all()
+    print("Database tables created successfully!") 

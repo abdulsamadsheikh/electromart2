@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - ElectroMart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Profile</h1>
+    <div class="profile-info">
+        <h2>Personal Information</h2>
+        <p><strong>Username:</strong> {{ user.Username }}</p>
+        <p><strong>Email:</strong> {{ user.Email }}</p>
+        <p><strong>Name:</strong> {{ user.FirstName }} {{ user.LastName }}</p>
+        
+        <h2>Contact Information</h2>
+        <p><strong>Address:</strong></p>
+        <p>{{ user.AddressLine1 }}</p>
+        {% if user.AddressLine2 %}
+        <p>{{ user.AddressLine2 }}</p>
+        {% endif %}
+        <p>{{ user.City }}, {{ user.PostalCode }}</p>
+        <p>{{ user.Country }}</p>
+        <p><strong>Phone:</strong> {{ user.PhoneNumber }}</p>
+        
+        <div class="mt-4">
+            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#editProfileModal">Edit Profile</a>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.FirstName }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.LastName }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.Email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address_line1">Address Line 1</label>
+                        <input type="text" class="form-control" id="address_line1" name="address_line1" value="{{ user.AddressLine1 }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="address_line2">Address Line 2</label>
+                        <input type="text" class="form-control" id="address_line2" name="address_line2" value="{{ user.AddressLine2 }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ user.City }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="postal_code">Postal Code</label>
+                        <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ user.PostalCode }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" value="{{ user.Country }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ user.PhoneNumber }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">New Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateProfile()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateProfile() {
+    const form = document.getElementById('editProfileForm');
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+        if (value) {  // Only include non-empty values
+            data[key] = value;
+        }
+    });
+
+    fetch('{{ url_for("auth.update_profile") }}', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.error || 'An error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+}
+</script>
+{% endblock %} 
