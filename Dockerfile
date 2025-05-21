@@ -1,5 +1,5 @@
-# Use Python 3.13.3 slim image
-FROM python:3.13.3-slim
+# Use Python 3.11 slim image
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -31,4 +31,4 @@ COPY . .
 WORKDIR /app/backend
 
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:create_app()"] 
+CMD gunicorn --bind 0.0.0.0:$PORT "app:create_app()" 
