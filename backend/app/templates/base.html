@@ -16,11 +16,11 @@
                 <li><a href="{{ url_for('main_routes.products') }}">Products</a></li>
                 <li><a href="{{ url_for('main_routes.cart') }}">Cart</a></li>
                 {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('auth_routes.order_history') }}">Order History</a></li>
-                    <li><a href="{{ url_for('auth_routes.logout') }}">Logout ({{ current_user.username }})</a></li>
+                    <li><a href="{{ url_for('auth.order_history') }}">Order History</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout ({{ current_user.username }})</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('auth_routes.login') }}">Login</a></li>
-                    <li><a href="{{ url_for('auth_routes.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
                 {% endif %}
             </ul>
         </nav>

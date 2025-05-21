@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, flash, redirect, url_for, render_template
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
-from .models import db, AppUser
+from .models import db, AppUser, CustomerOrder
 
 bp = Blueprint('auth', __name__)
 login_manager = LoginManager()
@@ -98,3 +98,14 @@ def update_profile():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@bp.route('/order_history')
+@login_required
+def order_history():
+    """Display user's order history."""
+    try:
+        orders = CustomerOrder.query.filter_by(UserID=current_user.UserID).order_by(CustomerOrder.OrderDate.desc()).all()
+        return render_template('order_history.html', orders=orders)
+    except Exception as e:
+        flash('Could not load order history. Please try again later.', 'error')
+        return redirect(url_for('main_routes.index'))
