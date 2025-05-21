@@ -1,18 +1,26 @@
 from flask import session
+from flask_login import current_user
 from decimal import Decimal
 
 class Cart:
-    CART_SESSION_KEY = 'cart'
+    @staticmethod
+    def _get_cart_key():
+        """Get the cart session key for the current user."""
+        if current_user.is_authenticated:
+            return f'cart_{current_user.UserID}'
+        return 'cart_anonymous'
 
     @staticmethod
     def get_cart():
         """Get the current cart from session."""
-        return session.get(Cart.CART_SESSION_KEY, {})
+        cart_key = Cart._get_cart_key()
+        return session.get(cart_key, {})
 
     @staticmethod
     def save_cart(cart):
         """Save the cart to session."""
-        session[Cart.CART_SESSION_KEY] = cart
+        cart_key = Cart._get_cart_key()
+        session[cart_key] = cart
 
     @staticmethod
     def add_item(product, quantity=1):
@@ -83,4 +91,5 @@ class Cart:
     @staticmethod
     def clear():
         """Clear the cart."""
-        session.pop(Cart.CART_SESSION_KEY, None) 
+        cart_key = Cart._get_cart_key()
+        session.pop(cart_key, None) 
