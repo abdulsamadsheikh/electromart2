@@ -21,7 +21,7 @@
                         {% if product.ImageURL %}
                             <img src="{{ url_for('static', filename='images/' + product.ImageURL) if not product.ImageURL.startswith('http') and not product.ImageURL.startswith('/static/') else product.ImageURL }}" alt="{{ product.Name }}">
                         {% else %}
-                            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                            <img src="{{ url_for('static', filename='images/phone_x.jpg') }}" alt="No image available">
                         {% endif %}
                     </div>
                     <div class="product-info">
@@ -51,7 +51,7 @@
 {% block styles %}
 <style>
     .hero {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/static/images/hero-bg.jpg');
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("{{ url_for('static', filename='images/laptop1.jpg') }}");
         background-size: cover;
         background-position: center;
         color: white;

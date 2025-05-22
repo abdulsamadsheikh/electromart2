@@ -14,7 +14,7 @@
                         {% if item.product.ImageURL %}
                             <img src="{{ url_for('static', filename='images/' + item.product.ImageURL) if not item.product.ImageURL.startswith('http') and not item.product.ImageURL.startswith('/static/') else item.product.ImageURL }}" alt="{{ item.product.Name }}">
                         {% else %}
-                            <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                            <img src="{{ url_for('static', filename='images/phone_x.jpg') }}" alt="No image available">
                         {% endif %}
                     </div>
                     <div class="item-details">

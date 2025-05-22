@@ -9,7 +9,7 @@
             {% if product.ImageURL %}
                 <img src="{{ url_for('static', filename='images/' + product.ImageURL) if not product.ImageURL.startswith('http') and not product.ImageURL.startswith('/static/') else product.ImageURL }}" alt="{{ product.Name }}">
             {% else %}
-                <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                <img src="{{ url_for('static', filename='images/phone_x.jpg') }}" alt="No image available">
             {% endif %}
         </div>
         <div class="product-info">
@@ -52,7 +52,7 @@
                             {% if related.ImageURL %}
                                 <img src="{{ url_for('static', filename='images/' + related.ImageURL) if not related.ImageURL.startswith('http') and not related.ImageURL.startswith('/static/') else related.ImageURL }}" alt="{{ related.Name }}">
                             {% else %}
-                                <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available">
+                                <img src="{{ url_for('static', filename='images/phone_x.jpg') }}" alt="No image available">
                             {% endif %}
                             <h3>{{ related.Name }}</h3>
                             <p class="price">${{ "%.2f"|format(related.Price) }}</p>
