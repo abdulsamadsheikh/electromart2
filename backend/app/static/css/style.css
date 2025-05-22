@@ -11,6 +11,13 @@ body {
     color: #333;
 }
 
+/* General image responsiveness */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Fixes potential spacing issues */
+}
+
 /* Header and navigation */
 header {
     background-color: #2c3e50;
@@ -110,6 +117,23 @@ nav ul li a:hover {
     color: #2c3e50;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+/* Product Detail Page Specific Styles */
+.product-detail .product-image {
+    /* Define a max-width for the image container on the product detail page */
+    max-width: 500px; /* Adjust as needed */
+    margin: 0 auto 2rem auto; /* Center the image container and add some bottom margin */
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.product-detail .product-image img {
+    width: 100%; /* Make image take full width of its container */
+    height: auto;  /* Maintain aspect ratio */
+    max-height: 500px; /* Optional: constrain max height */
+    object-fit: contain; /* Ensures the whole image is visible, fits within bounds */
 }
 
 /* Forms */
