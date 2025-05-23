@@ -10,11 +10,11 @@ This project was completed as part of the IDATG2204 course at NTNU and focuses o
 
 | Name                        | Candidate Number |
 |-----------------------------|------------------|
-| Sheikh Abdulsamad           | 10335            |
-| Ben Karroum Nourdin         | 10218            |
-| Mataev Bilal Rasulovich     | 10340            |
-| Alhammod Mohammad Rdwan     | 10352            |
-| Halvorsen Ole Bjørn         | 10358            |
+| Abdulsamad Sheikh           | 10335            |
+| Nourdin Ben Karroum         | 10218            |
+| Bilal Rasulovich Mataev     | 10340            |
+| Mohammad Rdwan Alhammod     | 10352            |
+| Ole Bjørn Halvorsen         | 10358            |
 
 ---
 
