@@ -77,33 +77,33 @@ All screenshots, diagrams, and project explanations are included in the official
 ## 📁 Project Structure
 
 ```plaintext
-electro_mart_project/
-├── backend/
-│   ├── app/
-│   │   ├── static/
-│   │   ├── templates/
+electromart2/
+├── backend
+│   ├── app
 │   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── cart.py
 │   │   ├── models.py
 │   │   ├── routes.py
-│   │   └── auth.py
-│   ├── tests/
-│   ├── run.py
+│   │   ├── static
+│   │   │   ├── css
+│   │   │   │   └── style.css
+│   │   │   ├── images
+│   │   │   └── js
+│   │   │       └── main.js
+│   │   └── templates
+│   │       ├── errors
+│   ├── app.db
 │   ├── config.py
-│   └── requirements.txt
-├── database_design/
-│   ├── schema.sql
-│   ├── populate_data.sql
-│   ├── sample_queries.sql
-│   └── normalization/
-│       ├── 1nf.md
-│       ├── 2nf.md
-│       ├── 3nf.md
-│       └── bcnf.md
-├── report/
-│   ├── ElectroMart_Project_Report.docx
-│   └── screenshots/
-├── .env.example
-├── .gitignore
+│   ├── requirements.txt
+│   └── run.py
+├── database_design
+│   ├── 01_schema.sql
+│   ├── 02_sample_data.sql
+│   ├── 03_sample_queries.sql
+│   ├── Databaser_Rapport.pdf
+│   └── diagrams
+├── Dockerfile
 └── README.md
 ````
 
@@ -144,16 +144,6 @@ electro_mart_project/
    ```bash
    python backend/run.py
    ```
-
----
-
-## 🧪 Testing
-
-Basic tests are located in `backend/tests/` and can be run using `pytest`:
-
-```bash
-pytest backend/tests/
-```
 
 ---
 
